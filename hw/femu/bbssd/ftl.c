@@ -453,7 +453,7 @@ static inline struct nand_page *get_pg(struct ssd *ssd, struct ppa *ppa)
     return &(blk->pg[ppa->g.pg]);
 }
 
-static uint64_t nand_read_latency() {
+static uint64_t nand_read_latency(void) {
   static double mu = 78.917, s = 0.633;
   uint64_t latency;
   srand(time(NULL));
@@ -464,7 +464,7 @@ static uint64_t nand_read_latency() {
   return latency;
 }
 
-static uint64_t nand_write_latency() {
+static uint64_t nand_write_latency(void) {
   static double mu = 356.76, gamma = 30.911;
   uint64_t latency;
   srand(time(NULL));
@@ -475,7 +475,7 @@ static uint64_t nand_write_latency() {
   return latency;
 }
 
-static uint64_t nand_erase_latency() {
+static uint64_t nand_erase_latency(void) {
   static double lambda = 1.4286;
   uint64_t latency;
   srand(time(NULL));
@@ -493,7 +493,7 @@ static uint64_t ssd_advance_status(struct ssd *ssd, struct ppa *ppa, struct
     uint64_t cmd_stime = (ncmd->stime == 0) ? \
         qemu_clock_get_ns(QEMU_CLOCK_REALTIME) : ncmd->stime;
     uint64_t nand_stime;
-    struct ssdparams *spp = &ssd->sp;
+    //struct ssdparams *spp = &ssd->sp;
     struct nand_lun *lun = get_lun(ssd, ppa);
     uint64_t lat = 0;
 
