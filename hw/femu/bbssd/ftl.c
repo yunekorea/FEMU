@@ -502,7 +502,8 @@ static uint64_t ssd_advance_status(struct ssd *ssd, struct ppa *ppa, struct
         /* read: perform NAND cmd first */
         nand_stime = (lun->next_lun_avail_time < cmd_stime) ? cmd_stime : \
                      lun->next_lun_avail_time;
-        lun->next_lun_avail_time = nand_stime + spp->pg_rd_lat;
+        //lun->next_lun_avail_time = nand_stime + spp->pg_rd_lat;
+        lun->next_lun_avail_time = nand_stime + nand_read_latency();
         lat = lun->next_lun_avail_time - cmd_stime;
 #if 0
         lun->next_lun_avail_time = nand_stime + spp->pg_rd_lat;
@@ -521,9 +522,11 @@ static uint64_t ssd_advance_status(struct ssd *ssd, struct ppa *ppa, struct
         nand_stime = (lun->next_lun_avail_time < cmd_stime) ? cmd_stime : \
                      lun->next_lun_avail_time;
         if (ncmd->type == USER_IO) {
-            lun->next_lun_avail_time = nand_stime + spp->pg_wr_lat;
+            //lun->next_lun_avail_time = nand_stime + spp->pg_wr_lat;
+            lun->next_lun_avail_time = nand_stime + nand_write_latency();
         } else {
-            lun->next_lun_avail_time = nand_stime + spp->pg_wr_lat;
+            //lun->next_lun_avail_time = nand_stime + spp->pg_wr_lat;
+            lun->next_lun_avail_time = nand_stime + nand_write_latency();
         }
         lat = lun->next_lun_avail_time - cmd_stime;
 
@@ -545,7 +548,8 @@ static uint64_t ssd_advance_status(struct ssd *ssd, struct ppa *ppa, struct
         /* erase: only need to advance NAND status */
         nand_stime = (lun->next_lun_avail_time < cmd_stime) ? cmd_stime : \
                      lun->next_lun_avail_time;
-        lun->next_lun_avail_time = nand_stime + spp->blk_er_lat;
+        //lun->next_lun_avail_time = nand_stime + spp->blk_er_lat;
+        lun->next_lun_avail_time = nand_stime + nand_erase_latency();
 
         lat = lun->next_lun_avail_time - cmd_stime;
         break;
