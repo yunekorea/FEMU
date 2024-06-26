@@ -453,6 +453,39 @@ static inline struct nand_page *get_pg(struct ssd *ssd, struct ppa *ppa)
     return &(blk->pg[ppa->g.pg]);
 }
 
+static uint64_t nand_read_latency() {
+  static double mu = 78.917, s = 0.633;
+  uint64_t latency;
+  srand(time(NULL));
+
+  double u = (double)rand() / RAND_MAX;
+  latency = (uint64_t)(1000 * (mu + s * log(u / (1-u))));
+
+  return latency;
+}
+
+static uint64_t nand_write_latency() {
+  static double mu = 356.76, gamma = 30.911;
+  uint64_t latency;
+  srand(time(NULL));
+
+  double u = (double)rand() / RAND_MAX;
+  latency = (uint64_t)(1000 * (mu + gamma * tan(M_PI * (u - 0.5))));
+
+  return latency;
+}
+
+static uint64_t nand_erase_latency() {
+  static double lambda = 1.4286;
+  uint64_t latency;
+  srand(time(NULL));
+
+  double u = (double)rand() / RAND_MAX;
+  latency = (uint64_t)(1000 * 1000 * (-log(1 - u) / lambda));
+
+  return latency;
+}
+
 static uint64_t ssd_advance_status(struct ssd *ssd, struct ppa *ppa, struct
         nand_cmd *ncmd)
 {
