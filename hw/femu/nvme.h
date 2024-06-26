@@ -18,6 +18,10 @@
 #include "nand/nand.h"
 #include "timing-model/timing.h"
 
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
 #define NVME_ID_NS_LBADS(ns)                                                  \
     ((ns)->id_ns.lbaf[NVME_ID_NS_FLBAS_INDEX((ns)->id_ns.flbas)].lbads)
 
