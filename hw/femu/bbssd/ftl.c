@@ -360,6 +360,11 @@ static void ssd_init_rmap(struct ssd *ssd)
     }
 }
 
+static void ssd_init_srand(void)
+{
+  srand(time(NULL));
+}
+
 void ssd_init(FemuCtrl *n)
 {
     struct ssd *ssd = n->ssd;
@@ -386,6 +391,9 @@ void ssd_init(FemuCtrl *n)
 
     /* initialize write pointer, this is how we allocate new pages for writes */
     ssd_init_write_pointer(ssd);
+
+    /* initialize random value generator */
+    ssd_init_srand();
 
     qemu_thread_create(&ssd->ftl_thread, "FEMU-FTL-Thread", ftl_thread, n,
                        QEMU_THREAD_JOINABLE);
@@ -456,21 +464,24 @@ static inline struct nand_page *get_pg(struct ssd *ssd, struct ppa *ppa)
 static uint64_t nand_read_latency(void) {
   static double mu = 78.917, s = 0.633;
   uint64_t latency;
-  srand(time(NULL));
+  //srand(time(NULL));
 
   double u = (double)rand() / RAND_MAX;
   latency = (uint64_t)(1000 * (mu + s * log(u / (1-u))));
+  ftl_log("nand_read_latency : %lu ns\n", latency);
 
   return latency;
 }
 
 static uint64_t nand_write_latency(void) {
   static double mu = 356.76, gamma = 30.911;
+  double u = 1.0;
   uint64_t latency;
-  srand(time(NULL));
-
-  double u = (double)rand() / RAND_MAX;
+  //srand(time(NULL));
+  while(u > 0.917 || u < 0.152)
+    u = (double)rand() / RAND_MAX;
   latency = (uint64_t)(1000 * (mu + gamma * tan(M_PI * (u - 0.5))));
+  ftl_log("nand_write_latency : %lu ns\n", latency);
 
   return latency;
 }
@@ -478,10 +489,11 @@ static uint64_t nand_write_latency(void) {
 static uint64_t nand_erase_latency(void) {
   static double lambda = 1.4286;
   uint64_t latency;
-  srand(time(NULL));
+  //srand(time(NULL));
 
   double u = (double)rand() / RAND_MAX;
   latency = (uint64_t)(1000 * 1000 * (-log(1 - u) / lambda));
+  ftl_log("nand_erase_latency : %lu ns\n", latency);
 
   return latency;
 }
