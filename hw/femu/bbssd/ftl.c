@@ -490,8 +490,9 @@ static uint64_t nand_erase_latency(void) {
   static double lambda = 1.4286;
   uint64_t latency;
   //srand(time(NULL));
-
-  double u = (double)rand() / RAND_MAX;
+  double u = 1.0;
+  while(u > 0.9999969743875374 || u < 0.567308830559105)
+    u = (double)rand() / RAND_MAX;
   latency = (uint64_t)(1000 * 1000 * (-log(1 - u) / lambda));
   ftl_log("nand_erase_latency : %lu ns\n", latency);
 
